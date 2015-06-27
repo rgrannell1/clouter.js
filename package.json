@@ -1,0 +1,16 @@
+{
+	"name":    "clouter.js",
+	"version": "0.1.0",
+
+	"license": "MIT",
+
+	"scripts": {
+		"rebuild": "babel es6/ -out-dir /es5",
+		"test":    "node_modules/mocha/bin/mocha test"
+	},
+
+	"dependencies": {
+		"mocha":  "*",
+		"should": "*"
+	}
+}
