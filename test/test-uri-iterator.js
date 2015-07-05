@@ -140,7 +140,25 @@ describe('UriIterator', function ( ) {
 
 	describe('getNextPath', function ( ) {
 
-		it('', function () {
+		it('should yield each path in turn', function () {
+
+			;[
+				'/a',               ['a'],
+				'/foo/bar',         ['foo', 'bar'],
+				'/foo/bar?a=1&b=2', ['foo', 'bar'],
+				'/a/b/?q=1',        ['a', 'b']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				pair[1].forEach(function (path) {
+
+					iter.getNextPath( ).should.equal(path)
+
+				})
+
+			})
 
 		})
 
