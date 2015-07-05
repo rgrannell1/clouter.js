@@ -80,7 +80,7 @@ describe('UriIterator', function ( ) {
 				var iter = UriIterator(pair[0])
 
 				iter.peekNextPaths( ).should.equal(pair[1])
-				should.not.exist(iter.peekNextPaths( ))
+				iter.peekNextPaths( ).should.equal(pair[1])
 
 			})
 
@@ -117,7 +117,22 @@ describe('UriIterator', function ( ) {
 
 	describe('peekNextPath', function ( ) {
 
-		it('', function () {
+		it('should show the first path', function () {
+
+			;[
+				['/a',               'a'],
+				['/foo/bar',         'foo'],
+				['/foo/bar?a=1&b=2', 'foo'],
+				['/a/b/?q=1',        'a']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.peekNextPath( ).should.equal(pair[1])
+				iter.peekNextPath( ).should.equal(pair[1])
+
+			})
 
 		})
 
