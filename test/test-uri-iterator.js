@@ -143,19 +143,17 @@ describe('UriIterator', function ( ) {
 		it('should yield each path in turn', function () {
 
 			;[
-				'/a',               ['a'],
-				'/foo/bar',         ['foo', 'bar'],
-				'/foo/bar?a=1&b=2', ['foo', 'bar'],
-				'/a/b/?q=1',        ['a', 'b']
+				['/a',               ['a']],
+				['/foo/bar',         ['foo', 'bar']],
+				['/foo/bar?a=1&b=2', ['foo', 'bar']],
+				['/a/b/?q=1',        ['a', 'b']]
 			]
 			.forEach(function (pair) {
 
 				var iter = UriIterator(pair[0])
 
 				pair[1].forEach(function (path) {
-
 					iter.getNextPath( ).should.equal(path)
-
 				})
 
 			})
@@ -164,7 +162,85 @@ describe('UriIterator', function ( ) {
 
 	})
 
+	describe('peekNextHash', function ( ) {
+
+		it('should always return the hash', function () {
+
+			;[
+				['/a/b#123',          '#123'],
+				['/a/#123',           '#123'],
+				['/a/b/c/?a=1&b=2#3', '#3']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.peekNextHash( ).should.equal(pair[1])
+				iter.peekNextHash( ).should.equal(pair[1])
+
+			})
+
+		})
+
+	})
+
+	describe('getNextHash', function ( ) {
+		it('should return the hash the first time', function ( ) {
+
+			;[
+				['/a/b#123',          '#123'],
+				['/a/#123',           '#123'],
+				['/a/b/c/?a=1&b=2#3', '#3']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.getNextHash( ).should.equal(pair[1])
+				should.not.exist(iter.getNextHash( ))
+
+			})
+		})
+
+	})
 
 
+
+
+	describe('peekNextParams', function ( ) {
+		it('should return the full query string', function () {
+
+			;[
+				['/a/?param0=a&param1=b', '?param0=a&param1=b']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.peekNextParams( ).should.equal(pair[1])
+				iter.peekNextParams( ).should.equal(pair[1])
+
+			})
+
+		})
+	})
+
+	describe('getNextParams', function ( ) {
+		it('should return the full query string once', function () {
+
+			;[
+				['/a/?param0=a&param1=b', '?param0=a&param1=b']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.getNextParams( ).should.equal(pair[1])
+				should.not.exist(iter.getNextParams( ))
+
+			})
+
+		})
+	})
 
 })
