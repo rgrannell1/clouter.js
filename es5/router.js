@@ -1,7 +1,9 @@
 "use strict";
 
 if (typeof process !== "undefined" && module.exports) {
+
 	var is = require("is");
+	var UriIterator = require("./uri-iterator");
 }
 
 {
@@ -195,9 +197,7 @@ if (typeof process !== "undefined" && module.exports) {
 
 			var run = function run() {
 
-				$(function () {
-					dispatchRoutes(location, self.routes.onLoad, self.middleware);
-				});
+				dispatchRoutes(location, self.routes.onLoad, self.middleware);
 
 				onLocationChange(location, function () {
 					dispatchRoutes(location, self.routes.onChange, self.middleware);

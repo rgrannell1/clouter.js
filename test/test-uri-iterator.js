@@ -292,9 +292,4 @@ describe('UriIterator', function ( ) {
 			})
 		})
 	})
-
-
-
-
-
 })

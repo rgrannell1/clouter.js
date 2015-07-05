@@ -1,5 +1,5 @@
 
-= clouter.js
+# clouter.js
 
 Clouter is a small library that adds four things:
 
