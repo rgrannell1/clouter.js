@@ -22,16 +22,16 @@ var parseResource = raw => {
 		parts.hash = raw.slice(raw.indexOf('#') + 1)
 		raw        = raw.slice(0, raw.indexOf('#'))
 
-		if (raw.indexOf('?') !== -1) {
+	}
 
-			var queryString = raw.slice(raw.indexOf('?') + 1)
-			raw             = raw.slice(0, raw.indexOf('?'))
+	if (raw.indexOf('?') !== -1) {
 
-			parts.params = queryString
-				.split('&')
-				.map(pairs => pairs.split('='))
+		var queryString = raw.slice(raw.indexOf('?') + 1)
+		raw             = raw.slice(0, raw.indexOf('?'))
 
-		}
+		parts.params = queryString
+			.split('&')
+			.map(pairs => pairs.split('='))
 
 	}
 

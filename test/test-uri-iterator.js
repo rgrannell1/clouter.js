@@ -80,7 +80,6 @@ describe('UriIterator', function ( ) {
 				var iter = UriIterator(pair[0])
 
 				iter.peekNextPaths( ).should.equal(pair[1])
-
 				should.not.exist(iter.peekNextPaths( ))
 
 			})

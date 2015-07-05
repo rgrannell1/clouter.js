@@ -12,16 +12,16 @@ var parseResource = function (raw) {
 
 		parts.hash = raw.slice(raw.indexOf("#") + 1);
 		raw = raw.slice(0, raw.indexOf("#"));
+	}
 
-		if (raw.indexOf("?") !== -1) {
+	if (raw.indexOf("?") !== -1) {
 
-			var queryString = raw.slice(raw.indexOf("?") + 1);
-			raw = raw.slice(0, raw.indexOf("?"));
+		var queryString = raw.slice(raw.indexOf("?") + 1);
+		raw = raw.slice(0, raw.indexOf("?"));
 
-			parts.params = queryString.split("&").map(function (pairs) {
-				return pairs.split("=");
-			});
-		}
+		parts.params = queryString.split("&").map(function (pairs) {
+			return pairs.split("=");
+		});
 	}
 
 	parts.paths = raw.split("/").filter(function (part) {
