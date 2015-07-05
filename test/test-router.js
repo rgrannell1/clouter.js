@@ -4,9 +4,10 @@
 
 
 
-
-var Router = require('../es5/router')
-var should = require('should')
+var is          = require('is')
+var Router      = require('../es5/router')
+var UriIterator = require('../es5/uri-iterator')
+var should      = require('should')
 
 
 
@@ -14,7 +15,7 @@ var should = require('should')
 
 describe('Router( )', function ( ) {
 
-	it('takes a location reference', function ( ) {
+	it('triggers onLoad callbacks', function ( ) {
 
 		var stub = {location: '/foo/bar'}
 		var app  = Router(stub)
@@ -22,7 +23,10 @@ describe('Router( )', function ( ) {
 		app
 		.onLoad(
 			function ( ) {return true},
-			function ( ) {
+			function (query, next) {
+
+				is.always.function(next)
+				query.should.be.instanceof(UriIterator)
 
 			}
 		)
