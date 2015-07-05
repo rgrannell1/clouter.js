@@ -3,6 +3,15 @@
 
 
 
+if (typeof process !== 'undefined' && module.exports) {
+	var is = require('is')
+}
+
+
+
+
+
+
 
 var parseResource = raw => {
 
@@ -26,7 +35,7 @@ var parseResource = raw => {
 
 	}
 
-	parts.paths = raw.split('/').filter(part => part.length > 0)
+	parts.paths = raw.split('/').filter(part => part && part.length > 0)
 
 	return parts
 }
@@ -45,15 +54,14 @@ var parseResource = raw => {
 
 
 
-var QueryIterator = function (raw) {
+var UriIterator = function (raw) {
 
-	var self  = { }
+	if (!(this instanceof UriIterator)) {
+		return new UriIterator(raw)
+	}
+
 
 	this.data = parseResource(raw)
-
-
-
-
 
 	this.peekNextPath = ( ) => {
 
@@ -182,7 +190,7 @@ var QueryIterator = function (raw) {
 			this.peekNextParams( ),
 			this.peekNextHash( )
 		]
-		.filter(part => part.length > 0)
+		.filter(part => part && part.length > 0)
 		.join('')
 
 	}
@@ -213,7 +221,7 @@ var QueryIterator = function (raw) {
 
 
 
-QueryIterator.fromQueryIterator = iterator => {
+UriIterator.fromUriIterator = iterator => {
 
 	var raw = [
 		iterator.peekNextPaths( ),
@@ -223,20 +231,28 @@ QueryIterator.fromQueryIterator = iterator => {
 	.filter(part => part && part.length > 0)
 	.join('')
 
-	return new QueryIterator(raw)
+	return new UriIterator(raw)
 
 }
 
-QueryIterator.fromLocation = location => {
+UriIterator.fromLocation = location => {
 
 	var raw = [
 		location.pathname,
 		location.search,
 		location.hash
 	]
-	.filter(part => part.length > 0)
+	.filter(part => part && part.length > 0)
 	.join('')
 
-	return new QueryIterator(raw)
+	return new UriIterator(raw)
 
+}
+
+
+
+
+
+if (typeof process !== 'undefined' && module.exports) {
+	module.exports = UriIterator
 }

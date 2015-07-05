@@ -1,4 +1,12 @@
 
+if (typeof process !== 'undefined' && module.exports) {
+	var is = require('is')
+}
+
+
+
+
+
 var use =  { }
 
 
@@ -8,60 +16,66 @@ use.location = {
 
 	isMatch: true,
 	where:   {
-		path: condition => {
+		path: (condition, binding) => {
 
 			use.location.parts.push({
 				method: 'getNextPath',
-				condition
+				condition,
+				binding
 			})
 
 			return use.location
 		},
-		paths: condition => {
+		paths: (condition, binding) => {
 
 			use.location.parts.push({
 				method: 'getNextPaths',
-				condition
+				condition,
+				binding
 			})
 
 			return use.location
 
 		},
-		hash: condition => {
+		hash: (condition, binding) => {
 
 			use.location.parts.push({
 				method: 'getNextHash',
-				condition
+				condition,
+				binding
 			})
 
 			return use.location
 
 		},
-		params: condition => {
+		params: (condition, binding) => {
 
 			use.location.parts.push({
 				method: 'getNextParams',
-				condition
+				condition,
+				binding
 			})
 
 			return use.location
 
 		},
-		param: condition => {
+		param: (condition, binding) => {
 
 			use.location.parts.push({
 				method: 'getNextParam',
-				condition
+				condition,
+				binding
 			})
 
 			return use.location
 
 		},
-		rest: condition => {
+		rest: (condition, binding) => {
 
 			use.location.parts.push({
 				method: 'getRest',
-				condition
+				condition,
+				binding
 			})
 
 			return use.location
@@ -72,7 +86,7 @@ use.location = {
 	compile: function (debug) {
 		return location => {
 
-			var iterator = new QueryIterator.fromLocation(location)
+			var iterator = new UriIterator.fromLocation(location)
 
 			for (var ith = 0; ith < this.parts.length; ++ith) {
 
@@ -81,7 +95,7 @@ use.location = {
 
 				var {method, condition} = part
 
-				var clone = QueryIterator.fromQueryIterator(iterator)
+				var clone = UriIterator.fromUriIterator(iterator)
 				var value = iterator[method]( )
 
 
@@ -89,20 +103,31 @@ use.location = {
 
 				if (is.undefined(value)) {
 					// -- that part doesn't exist, so can never be matched.
-					return false
+
+					return {
+						value: false,
+						parts: this.parts
+					}
+
 				} else {
 					// -- test the match
 
 					var isMatch = isPartMatch(condition, clone, value)
 
 					if (!isMatch) {
-						return false
+						return {
+							value: false,
+							parts: this.parts
+						}
 					}
 
 				}
 			}
 
-			return true
+			return {
+				value: true,
+				parts: this.parts
+			}
 
 		}
 	}
@@ -132,5 +157,15 @@ var isPartMatch = (condition, clone, part) => {
 	}
 
 	return wrapped( )
+
+}
+
+
+
+
+
+if (typeof process !== 'undefined' && module.exports) {
+
+	module.exports = use
 
 }
