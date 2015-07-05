@@ -250,20 +250,51 @@ describe('UriIterator', function ( ) {
 
 
 	describe('getNextParam', function ( ) {
-		it('', function ( ) {
+		it('should return each parametre in order', function ( ) {
 
 			;[
-				[ '/a/b?foo=0&bar=1', {key: 'foo', value: '0'}, {key: 'bar', value: '1'} ]
+				[ '/a/b?foo=0&bar=1', [{key: 'foo', value: '0'}, {key: 'bar', value: '1'}] ]
 			]
 			.forEach(function (pair) {
 
-				var iter = UriIterator(pair[0])
+				var iter  = UriIterator(pair[0])
 
-				iter.getNextParam( ).should.equal(pair[1])
+				pair[1].forEach(function (expected) {
 
+					var param = iter.getNextParam( )
 
+					param.key  .should.equal(expected.key)
+					param.value.should.equal(expected.value)
+
+				})
 			})
-
 		})
 	})
+
+	describe('peekNextParam', function ( ) {
+		it('should return each parametre in order', function ( ) {
+
+			;[
+				[ '/a/b?foo=0&bar=1', [{key: 'foo', value: '0'}, {key: 'foo', value: '0'}] ]
+			]
+			.forEach(function (pair) {
+
+				var iter  = UriIterator(pair[0])
+
+				pair[1].forEach(function (expected) {
+
+					var param = iter.peekNextParam( )
+
+					param.key  .should.equal(expected.key)
+					param.value.should.equal(expected.value)
+
+				})
+			})
+		})
+	})
+
+
+
+
+
 })
