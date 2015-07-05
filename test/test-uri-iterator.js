@@ -211,7 +211,8 @@ describe('UriIterator', function ( ) {
 		it('should return the full query string', function () {
 
 			;[
-				['/a/?param0=a&param1=b', '?param0=a&param1=b']
+				['/a/?param0=a&param1=b', '?param0=a&param1=b'],
+				['/a?a=1',                '?a=1']
 			]
 			.forEach(function (pair) {
 
@@ -229,7 +230,8 @@ describe('UriIterator', function ( ) {
 		it('should return the full query string once', function () {
 
 			;[
-				['/a/?param0=a&param1=b', '?param0=a&param1=b']
+				['/a/?param0=a&param1=b', '?param0=a&param1=b'],
+				['/a?a=1',                '?a=1']
 			]
 			.forEach(function (pair) {
 
@@ -243,4 +245,25 @@ describe('UriIterator', function ( ) {
 		})
 	})
 
+
+
+
+
+	describe('getNextParam', function ( ) {
+		it('', function ( ) {
+
+			;[
+				[ '/a/b?foo=0&bar=1', {key: 'foo', value: '0'}, {key: 'bar', value: '1'} ]
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.getNextParam( ).should.equal(pair[1])
+
+
+			})
+
+		})
+	})
 })

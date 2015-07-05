@@ -31,7 +31,10 @@ var parseResource = raw => {
 
 		parts.params = queryString
 			.split('&')
-			.map(pairs => pairs.split('='))
+			.map(pair => pair.split('='))
+			.map(pair => {
+				return {key: pair[0], value: pair[1]}
+			})
 
 	}
 
@@ -138,7 +141,7 @@ var UriIterator = function (raw) {
 		if (!isEmpty) {
 
 			return '?' + this.data.params.map(pair => {
-					return pair.join('=')
+					return pair.key + '=' + pair.value
 				})
 				.join('&')
 

@@ -19,8 +19,10 @@ var parseResource = function (raw) {
 		var queryString = raw.slice(raw.indexOf("?") + 1);
 		raw = raw.slice(0, raw.indexOf("?"));
 
-		parts.params = queryString.split("&").map(function (pairs) {
-			return pairs.split("=");
+		parts.params = queryString.split("&").map(function (pair) {
+			return pair.split("=");
+		}).map(function (pair) {
+			return { key: pair[0], value: pair[1] };
 		});
 	}
 
@@ -109,7 +111,7 @@ var UriIterator = (function (_UriIterator) {
 		if (!isEmpty) {
 
 			return "?" + _this.data.params.map(function (pair) {
-				return pair.join("=");
+				return pair.key + "=" + pair.value;
 			}).join("&");
 		}
 	};
