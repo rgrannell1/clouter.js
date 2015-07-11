@@ -42,7 +42,7 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		dispatchRoutes.precond(location, routes, middleware)
 
-		var query = UriIterator.fromLocation(location)
+		var query = UriIterator.fromLocation(location( ))
 		var clone = UriIterator.fromUriIterator(query)
 
 
@@ -55,16 +55,16 @@ if (typeof process !== 'undefined' && module.exports) {
 			// -- either a boolean, or a route object describing how to
 			// -- bind the result of the location.
 
-			var isMatch = route.pattern(location)
+			var isMatch = route.pattern(location( ))
 
 			if (is.boolean(isMatch) && isMatch) {
 
 				middleware.forEach(response => {
-					response(location)
+					response(location( ))
 				})
 
 				route.response(query, ( ) => {
-					dispatchRoutes(location, routes.slice(ith + 1), middleware)
+					dispatchRoutes(location( ), routes.slice(ith + 1), middleware)
 				})
 
 				return
@@ -95,6 +95,7 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		is.always.array(routes)
 		is.always.array(middleware)
+		is.always.function(location)
 
 	}
 
@@ -108,9 +109,11 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		setInterval(( ) => {
 
-			if (previous !== location) {
+			var currentURL = location( ).href
 
-				previous = location
+			if (previous !== currentURL) {
+
+				previous = currentURL
 				callback( )
 
 			}

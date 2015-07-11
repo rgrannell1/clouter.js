@@ -15,9 +15,12 @@ var should      = require('should')
 
 describe('Router( )', function ( ) {
 
-	it('triggers onLoad callbacks', function ( ) {
+	it('triggers all onLoad callbacks', function ( ) {
 
-		var stub = {location: '/foo/bar'}
+		var stub = {location: function ( ) {
+			return '/foo/bar'
+		}}
+
 		var app  = Router(stub)
 
 		app
@@ -30,7 +33,57 @@ describe('Router( )', function ( ) {
 
 			}
 		)
+		.onLoad(
+			function ( ) {return true},
+			function (query, next) {
+
+				is.always.function(next)
+				query.should.be.instanceof(UriIterator)
+
+			}
+		)
 		.run( )
+
+	})
+
+	it('triggers all onChange callbacks', function (done) {
+
+		var window = {location: '/foo/bar'}
+		var stub   = {
+			location: function ( ) {
+				return window.location
+			}
+		}
+
+		var count = 0
+		var app   = Router(stub)
+
+		app
+		.onChange(
+			function ( ) {
+				return true
+			},
+			function (query, next) {
+				count++
+			}
+		)
+		.run( )
+
+
+		window.location = '/foo/bar/baz'
+
+		setTimeout(function ( ) {
+
+			window.location = ''
+
+		}, 1000)
+
+		setTimeout(function ( ) {
+
+			count.should.equal(2)
+			done( )
+
+		}, 1500)
 
 	})
 

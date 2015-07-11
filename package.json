@@ -6,7 +6,7 @@
 
 	"scripts": {
 		"rebuild": "babel es6 --out-dir es5",
-		"test":    "babel es6 --out-dir es5 && node_modules/mocha/bin/mocha test"
+		"test":    "babel es6 --out-dir es5 && node_modules/mocha/bin/mocha test --timeout 5000"
 	},
 
 	"dependencies": {

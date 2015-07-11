@@ -36,7 +36,7 @@ if (typeof process !== "undefined" && module.exports) {
 
 			dispatchRoutes.precond(location, routes, middleware);
 
-			var query = UriIterator.fromLocation(location);
+			var query = UriIterator.fromLocation(location());
 			var clone = UriIterator.fromUriIterator(query);
 
 			for (var ith = 0; ith < routes.length; ++ith) {
@@ -49,16 +49,16 @@ if (typeof process !== "undefined" && module.exports) {
 					// -- either a boolean, or a route object describing how to
 					// -- bind the result of the location.
 
-					isMatch = route.pattern(location);
+					isMatch = route.pattern(location());
 
 					if (is.boolean(isMatch) && isMatch) {
 
 						middleware.forEach(function (response) {
-							response(location);
+							response(location());
 						});
 
 						route.response(query, function () {
-							dispatchRoutes(location, routes.slice(ith + 1), middleware);
+							dispatchRoutes(location(), routes.slice(ith + 1), middleware);
 						});
 
 						return {
@@ -89,6 +89,7 @@ if (typeof process !== "undefined" && module.exports) {
 
 			is.always.array(routes);
 			is.always.array(middleware);
+			is.always["function"](location);
 		};
 
 		var onLocationChange = function (location, callback) {
@@ -97,9 +98,11 @@ if (typeof process !== "undefined" && module.exports) {
 
 			setInterval(function () {
 
-				if (previous !== location) {
+				var currentURL = location().href;
 
-					previous = location;
+				if (previous !== currentURL) {
+
+					previous = currentURL;
 					callback();
 				}
 			}, 100);
