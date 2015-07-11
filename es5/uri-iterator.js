@@ -161,16 +161,16 @@ var UriIterator = (function (_UriIterator) {
 		return result;
 	};
 
-	this.peekRest = function () {
+	this.peekWhole = function () {
 
 		return [_this.peekNextPaths(), _this.peekWholeParams(), _this.peekWholeHash()].filter(function (part) {
 			return part && part.length > 0;
 		}).join("");
 	};
 
-	this.getRest = function () {
+	this.getWhole = function () {
 
-		var result = _this.peekRest();["hash", "paths", "params"].forEach(function (key) {
+		var result = _this.peekWhole();["hash", "paths", "params"].forEach(function (key) {
 			_this.data[key] = undefined;
 		});
 

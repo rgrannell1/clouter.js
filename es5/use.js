@@ -63,7 +63,7 @@ use.location = {
 		rest: function (condition, binding) {
 
 			use.location.parts.push({
-				method: "getRest",
+				method: "getWhole",
 				condition: condition,
 				binding: binding
 			});

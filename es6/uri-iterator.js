@@ -204,7 +204,7 @@ var UriIterator = function (raw) {
 
 	}
 
-	this.peekRest = ( ) => {
+	this.peekWhole = ( ) => {
 
 		return [
 			this.peekNextPaths( ),
@@ -216,9 +216,9 @@ var UriIterator = function (raw) {
 
 	}
 
-	this.getRest = ( ) => {
+	this.getWhole = ( ) => {
 
-		var result = this.peekRest( )
+		var result = this.peekWhole( )
 
 		;['hash', 'paths', 'params'].forEach(key => {
 			this.data[key] = undefined

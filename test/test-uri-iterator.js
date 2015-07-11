@@ -15,7 +15,7 @@ var should      = require('should')
 
 describe('UriIterator', function ( ) {
 
-	describe('peekRest( )', function ( ) {
+	describe('peekWhole( )', function ( ) {
 
 		it('returns the entire path if no segments are removed', function ( ) {
 
@@ -29,8 +29,8 @@ describe('UriIterator', function ( ) {
 
 				var iter = UriIterator(path)
 
-				iter.peekRest( ).should.equal(path)
-				iter.peekRest( ).should.equal(path)
+				iter.peekWhole( ).should.equal(path)
+				iter.peekWhole( ).should.equal(path)
 
 			})
 
@@ -38,7 +38,7 @@ describe('UriIterator', function ( ) {
 
 	})
 
-	describe('getRest( )', function ( ) {
+	describe('getWhole( )', function ( ) {
 
 		it('returns the entire path the first time, and undefined thereafter', function ( ) {
 
@@ -52,8 +52,8 @@ describe('UriIterator', function ( ) {
 
 				var iter = UriIterator(path)
 
-				iter.getRest( ).should.equal(path)
-				iter.getRest( ).should.be.undefined
+				iter.getWhole( ).should.equal(path)
+				iter.getWhole( ).should.be.undefined
 
 			})
 

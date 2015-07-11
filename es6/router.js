@@ -288,9 +288,91 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		}
 
-		var go = function (path) {
+
+
+
+
+		var clearPaths    = function ( ) {
+			window.location.pathname = undefined
+		}
+
+		var clearHash     = function ( ) {
+			window.location.hash = undefined
+		}
+
+		var clearPath     = function ( ) {
+			window.location.pathname = window.location.pathname.split('/').slice(0, -1).join('/')
+		}
+
+		var clearParam    = function ( ) {
 
 		}
+
+		var clearParams   = function ( ) {
+
+		}
+
+		var clearResource = function ( ) {
+
+		}
+
+		var clearFilter   = function ( ) {
+
+		}
+
+
+		var clear         = function ( ) {
+
+		}
+
+
+
+
+		var setPaths    = function ( ) {
+
+		}
+
+		var setHash     = function ( ) {
+
+		}
+
+		var setPath     = function ( ) {
+
+		}
+
+		var setParam    = function ( ) {
+
+		}
+
+		var setParams   = function ( ) {
+
+		}
+
+		var setResource = function ( ) {
+
+		}
+
+		var setFilter   = function ( ) {
+
+		}
+
+
+		var set         = function ( ) {
+
+		}
+
+
+
+
+
+		var addPath  = function ( ) {
+
+		}
+
+		var addParam = function ( ) {
+
+		}
+
 
 
 
