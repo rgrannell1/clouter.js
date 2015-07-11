@@ -87,4 +87,33 @@ describe('Router( )', function ( ) {
 
 	})
 
+	it('triggers all onAlter callbacks', function (done) {
+
+		var window = {location: '/foo/bar'}
+		var stub   = {
+			location: function ( ) {
+				return window.location
+			}
+		}
+
+		var app = Router(stub)
+
+		app
+		.onAlter(
+			function (query) {
+				return query.peekNextQuery( )
+			},
+			function (query) {
+				return true
+			},
+			function (query, next) {
+				return query
+			}
+		)
+		.run( )
+
+		done( )
+
+	})
+
 })

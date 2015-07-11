@@ -102,6 +102,65 @@ if (typeof process !== 'undefined' && module.exports) {
 
 
 
+	let dispatchAlteredRoutes = (location, routes, middleware) => {
+
+		var currentLocation = location( )
+
+		for (let ith = 0; ith < routes.length; ++ith) {
+
+			var route = routes[ith]
+			var part  = route.projection(UriIterator.fromLocation(currentLocation))
+
+			// -- if the part hasn't changed, continue
+			if (part === routes[ith].previous) {
+				continue
+			}
+
+			// -- update the previous part to the current.
+			routes[ith].previous = part
+
+			// -- either a boolean, or a route object describing how to
+			// -- bind the result of the location.
+
+			var isMatch = route.pattern(currentLocation)
+
+			if (is.boolean(isMatch) && isMatch) {
+
+				middleware.forEach(response => {
+					response(currentLocation)
+				})
+
+				route.response(UriIterator.fromLocation(currentLocation), ( ) => {
+					dispatchRoutes(UriIterator.fromLocation(currentLocation), routes.slice(ith + 1), middleware)
+				})
+
+				return
+
+			} else if (is.object(isMatch)) {
+
+				if (isMatch.hasOwnProperty('value') && isMatch.hasOwnProperty('parts')) {
+
+					middleware.forEach(response => {
+						response(bindLocation(isMatch, clone))
+					})
+
+					route.response(UriIterator.fromLocation(currentLocation), ( ) => {
+						dispatchRoutes(bindLocation(isMatch, clone), routes.slice(ith + 1), middleware)
+					})
+
+				} else {
+					throw new Error('invalid object')
+				}
+
+			}
+
+		}
+
+	}
+
+
+
+
 
 	let onLocationChange = (location, callback) => {
 
@@ -122,16 +181,13 @@ if (typeof process !== 'undefined' && module.exports) {
 
 	}
 
-
-
-
-
 	var Router = function ({location}) {
 
 		var self = {
 			routes: {
 				onLoad:   [ ],
-				onChange: [ ]
+				onChange: [ ],
+				onAlter:  [ ]
 			},
 			middleware:   [ ],
 
@@ -149,11 +205,30 @@ if (typeof process !== 'undefined' && module.exports) {
 				routes:     self.routes,
 				middleware: self.middleware,
 
-				onChange:   onChange,
-				onLoad:     onLoad,
-				use:        use,
+				onChange,
+				onLoad,
+				onAlter,
+				use,
 
-				run:        run
+				run
+			}
+
+		}
+
+		var onAlter  = function (projection, pattern, response) {
+
+			self.routes.onAlter.push({projection, pattern, response, previous: undefined})
+
+			return {
+				routes:     self.routes,
+				middleware: self.middleware,
+
+				onChange,
+				onLoad,
+				onAlter,
+
+				use,
+				run
 			}
 
 		}
@@ -166,11 +241,12 @@ if (typeof process !== 'undefined' && module.exports) {
 				routes:     self.routes,
 				middleware: self.middleware,
 
-				onChange:   onChange,
-				onLoad:     onLoad,
-				use:        use,
+				onChange,
+				onLoad,
+				onAlter,
+				use,
 
-				run:        run
+				run
 			}
 
 		}
@@ -187,11 +263,12 @@ if (typeof process !== 'undefined' && module.exports) {
 				routes:     self.routes,
 				middleware: self.middleware,
 
-				onChange:   onChange,
-				onLoad:     onLoad,
-				use:        use,
+				onChange,
+				onLoad,
+				onAlter,
+				use,
 
-				run:        run
+				run
 			}
 
 		}
@@ -204,6 +281,11 @@ if (typeof process !== 'undefined' && module.exports) {
 				dispatchRoutes(location, self.routes.onChange, self.middleware)
 			})
 
+			onLocationChange(location, ( ) => {
+				dispatchAlteredRoutes(location, self.routes.onAlter, self.middleware)
+			})
+
+
 		}
 
 
@@ -211,6 +293,7 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		self.onLoad   = onLoad
 		self.onChange = onChange
+		self.onAlter  = onAlter
 
 		self.use      = use
 		self.run      = run

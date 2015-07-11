@@ -92,6 +92,72 @@ if (typeof process !== "undefined" && module.exports) {
 			is.always["function"](location);
 		};
 
+		var dispatchAlteredRoutes = function (location, routes, middleware) {
+
+			var currentLocation = location();
+
+			for (var ith = 0; ith < routes.length; ++ith) {
+				var route;
+				var part;
+				var isMatch;
+
+				var _ret2 = (function (ith) {
+					route = routes[ith];
+					part = route.projection(UriIterator.fromLocation(currentLocation));
+
+					// -- if the part hasn't changed, continue
+					if (part === routes[ith].previous) {
+						return "continue";
+					}
+
+					// -- update the previous part to the current.
+					routes[ith].previous = part;
+
+					// -- either a boolean, or a route object describing how to
+					// -- bind the result of the location.
+
+					isMatch = route.pattern(currentLocation);
+
+					if (is.boolean(isMatch) && isMatch) {
+
+						middleware.forEach(function (response) {
+							response(currentLocation);
+						});
+
+						route.response(UriIterator.fromLocation(currentLocation), function () {
+							dispatchRoutes(UriIterator.fromLocation(currentLocation), routes.slice(ith + 1), middleware);
+						});
+
+						return {
+							v: undefined
+						};
+					} else if (is.object(isMatch)) {
+
+						if (isMatch.hasOwnProperty("value") && isMatch.hasOwnProperty("parts")) {
+
+							middleware.forEach(function (response) {
+								response(bindLocation(isMatch, clone));
+							});
+
+							route.response(UriIterator.fromLocation(currentLocation), function () {
+								dispatchRoutes(bindLocation(isMatch, clone), routes.slice(ith + 1), middleware);
+							});
+						} else {
+							throw new Error("invalid object");
+						}
+					}
+				})(ith);
+
+				switch (_ret2) {
+					case "continue":
+						continue;
+
+					default:
+						if (typeof _ret2 === "object") return _ret2.v;
+				}
+			}
+		};
+
 		var onLocationChange = function (location, callback) {
 
 			var previous;
@@ -114,21 +180,12 @@ if (typeof process !== "undefined" && module.exports) {
 			var self = {
 				routes: {
 					onLoad: [],
-					onChange: []
+					onChange: [],
+					onAlter: []
 				},
 				middleware: [] };
 
-			var onLoad = (function (_onLoad) {
-				var _onLoadWrapper = function onLoad(_x, _x2) {
-					return _onLoad.apply(this, arguments);
-				};
-
-				_onLoadWrapper.toString = function () {
-					return _onLoad.toString();
-				};
-
-				return _onLoadWrapper;
-			})(function (pattern, response) {
+			var onLoad = function onLoad(pattern, response) {
 
 				self.routes.onLoad.push({ pattern: pattern, response: response });
 
@@ -138,23 +195,31 @@ if (typeof process !== "undefined" && module.exports) {
 
 					onChange: onChange,
 					onLoad: onLoad,
+					onAlter: onAlter,
 					use: use,
 
 					run: run
 				};
-			});
+			};
 
-			var onChange = (function (_onChange) {
-				var _onChangeWrapper = function onChange(_x, _x2) {
-					return _onChange.apply(this, arguments);
+			var onAlter = function onAlter(projection, pattern, response) {
+
+				self.routes.onAlter.push({ projection: projection, pattern: pattern, response: response, previous: undefined });
+
+				return {
+					routes: self.routes,
+					middleware: self.middleware,
+
+					onChange: onChange,
+					onLoad: onLoad,
+					onAlter: onAlter,
+
+					use: use,
+					run: run
 				};
+			};
 
-				_onChangeWrapper.toString = function () {
-					return _onChange.toString();
-				};
-
-				return _onChangeWrapper;
-			})(function (pattern, response) {
+			var onChange = function onChange(pattern, response) {
 
 				self.routes.onChange.push({ pattern: pattern, response: response });
 
@@ -164,25 +229,16 @@ if (typeof process !== "undefined" && module.exports) {
 
 					onChange: onChange,
 					onLoad: onLoad,
+					onAlter: onAlter,
 					use: use,
 
 					run: run
 				};
-			});
+			};
 
 			onChange.precond = function (pattern, response) {};
 
-			var use = (function (_use) {
-				var _useWrapper = function use(_x) {
-					return _use.apply(this, arguments);
-				};
-
-				_useWrapper.toString = function () {
-					return _use.toString();
-				};
-
-				return _useWrapper;
-			})(function (response) {
+			var use = function use(response) {
 
 				self.middleware.push(response);
 
@@ -192,11 +248,12 @@ if (typeof process !== "undefined" && module.exports) {
 
 					onChange: onChange,
 					onLoad: onLoad,
+					onAlter: onAlter,
 					use: use,
 
 					run: run
 				};
-			});
+			};
 
 			var run = function run() {
 
@@ -205,10 +262,15 @@ if (typeof process !== "undefined" && module.exports) {
 				onLocationChange(location, function () {
 					dispatchRoutes(location, self.routes.onChange, self.middleware);
 				});
+
+				onLocationChange(location, function () {
+					dispatchAlteredRoutes(location, self.routes.onAlter, self.middleware);
+				});
 			};
 
 			self.onLoad = onLoad;
 			self.onChange = onChange;
+			self.onAlter = onAlter;
 
 			self.use = use;
 			self.run = run;
