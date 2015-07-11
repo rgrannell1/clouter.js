@@ -40,7 +40,7 @@ use.location = {
 		hash: (condition, binding) => {
 
 			use.location.parts.push({
-				method: 'getNextHash',
+				method: 'getHash',
 				condition,
 				binding
 			})

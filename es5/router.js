@@ -268,12 +268,15 @@ if (typeof process !== "undefined" && module.exports) {
 				});
 			};
 
+			var go = function go(path) {};
+
 			self.onLoad = onLoad;
 			self.onChange = onChange;
 			self.onAlter = onAlter;
 
 			self.use = use;
 			self.run = run;
+			self.go = go;
 
 			return self;
 		};

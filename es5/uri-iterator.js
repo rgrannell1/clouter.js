@@ -89,22 +89,37 @@ var UriIterator = (function (_UriIterator) {
 		return result;
 	};
 
-	this.peekNextHash = function () {
+	this.peekHash = function () {
+
+		if (!is.undefined(_this.data.hash)) {
+			return _this.data.hash;
+		}
+	};
+
+	this.getHash = function () {
+
+		var result = _this.peekHash();
+		_this.data.hash = undefined;
+
+		return result;
+	};
+
+	this.peekWholeHash = function () {
 
 		if (!is.undefined(_this.data.hash)) {
 			return "#" + _this.data.hash;
 		}
 	};
 
-	this.getNextHash = function () {
+	this.getWholeHash = function () {
 
-		var result = _this.peekNextHash();
+		var result = _this.peekWholeHash();
 		_this.data.hash = undefined;
 
 		return result;
 	};
 
-	this.peekNextParams = function () {
+	this.peekWholeParams = function () {
 
 		var isEmpty = is.undefined(_this.data.params) || _this.data.params.length === 0;
 
@@ -116,9 +131,9 @@ var UriIterator = (function (_UriIterator) {
 		}
 	};
 
-	this.getNextParams = function () {
+	this.getWholeParams = function () {
 
-		var params = _this.peekNextParams();
+		var params = _this.peekWholeParams();
 		_this.data.params = undefined;
 
 		return params;
@@ -148,7 +163,7 @@ var UriIterator = (function (_UriIterator) {
 
 	this.peekRest = function () {
 
-		return [_this.peekNextPaths(), _this.peekNextParams(), _this.peekNextHash()].filter(function (part) {
+		return [_this.peekNextPaths(), _this.peekWholeParams(), _this.peekWholeHash()].filter(function (part) {
 			return part && part.length > 0;
 		}).join("");
 	};
@@ -167,7 +182,7 @@ var UriIterator = (function (_UriIterator) {
 
 UriIterator.fromUriIterator = function (iterator) {
 
-	var raw = [iterator.peekNextPaths(), iterator.peekNextParams(), iterator.peekNextHash()].filter(function (part) {
+	var raw = [iterator.peekNextPaths(), iterator.peekWholeParams(), iterator.peekHash()].filter(function (part) {
 		return part && part.length > 0;
 	}).join("");
 

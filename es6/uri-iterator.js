@@ -114,7 +114,24 @@ var UriIterator = function (raw) {
 
 
 
-	this.peekNextHash = ( ) => {
+	this.peekHash = ( ) => {
+
+		if (!is.undefined(this.data.hash)) {
+			return this.data.hash
+		}
+
+	}
+
+	this.getHash = ( ) => {
+
+		var result     = this.peekHash( )
+		this.data.hash = undefined
+
+		return result
+
+	}
+
+	this.peekWholeHash = ( ) => {
 
 		if (!is.undefined(this.data.hash)) {
 			return '#' + this.data.hash
@@ -122,9 +139,9 @@ var UriIterator = function (raw) {
 
 	}
 
-	this.getNextHash = ( ) => {
+	this.getWholeHash = ( ) => {
 
-		var result     = this.peekNextHash( )
+		var result     = this.peekWholeHash( )
 		this.data.hash = undefined
 
 		return result
@@ -134,7 +151,8 @@ var UriIterator = function (raw) {
 
 
 
-	this.peekNextParams = ( ) => {
+
+	this.peekWholeParams = ( ) => {
 
 		var isEmpty = is.undefined(this.data.params) || this.data.params.length === 0
 
@@ -149,9 +167,9 @@ var UriIterator = function (raw) {
 
 	}
 
-	this.getNextParams = ( ) => {
+	this.getWholeParams = ( ) => {
 
-		var params       = this.peekNextParams( )
+		var params       = this.peekWholeParams( )
 		this.data.params = undefined
 
 		return params
@@ -190,8 +208,8 @@ var UriIterator = function (raw) {
 
 		return [
 			this.peekNextPaths( ),
-			this.peekNextParams( ),
-			this.peekNextHash( )
+			this.peekWholeParams( ),
+			this.peekWholeHash( )
 		]
 		.filter(part => part && part.length > 0)
 		.join('')
@@ -228,8 +246,8 @@ UriIterator.fromUriIterator = iterator => {
 
 	var raw = [
 		iterator.peekNextPaths( ),
-		iterator.peekNextParams( ),
-		iterator.peekNextHash( )
+		iterator.peekWholeParams( ),
+		iterator.peekHash( )
 	]
 	.filter(part => part && part.length > 0)
 	.join('')

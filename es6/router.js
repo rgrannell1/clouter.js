@@ -288,6 +288,10 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		}
 
+		var go = function (path) {
+
+		}
+
 
 
 
@@ -297,6 +301,7 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		self.use      = use
 		self.run      = run
+		self.go       = go
 
 		return self
 

@@ -162,7 +162,49 @@ describe('UriIterator', function ( ) {
 
 	})
 
-	describe('peekNextHash', function ( ) {
+	describe('peekHash', function ( ) {
+
+		it('should always return the hash', function () {
+
+			;[
+				['/a/b#123',          '123'],
+				['/a/#123',           '123'],
+				['/a/b/c/?a=1&b=2#3', '3']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.peekHash( ).should.equal(pair[1])
+				iter.peekHash( ).should.equal(pair[1])
+
+			})
+
+		})
+
+	})
+
+	describe('getHash', function ( ) {
+		it('should return the hash the first time', function ( ) {
+
+			;[
+				['/a/b#123',          '123'],
+				['/a/#123',           '123'],
+				['/a/b/c/?a=1&b=2#3', '3']
+			]
+			.forEach(function (pair) {
+
+				var iter = UriIterator(pair[0])
+
+				iter.getHash( ).should.equal(pair[1])
+				should.not.exist(iter.getHash( ))
+
+			})
+		})
+
+	})
+
+	describe('peekWholeHash', function ( ) {
 
 		it('should always return the hash', function () {
 
@@ -175,8 +217,8 @@ describe('UriIterator', function ( ) {
 
 				var iter = UriIterator(pair[0])
 
-				iter.peekNextHash( ).should.equal(pair[1])
-				iter.peekNextHash( ).should.equal(pair[1])
+				iter.peekWholeHash( ).should.equal(pair[1])
+				iter.peekWholeHash( ).should.equal(pair[1])
 
 			})
 
@@ -184,7 +226,7 @@ describe('UriIterator', function ( ) {
 
 	})
 
-	describe('getNextHash', function ( ) {
+	describe('getWholeHash', function ( ) {
 		it('should return the hash the first time', function ( ) {
 
 			;[
@@ -196,8 +238,8 @@ describe('UriIterator', function ( ) {
 
 				var iter = UriIterator(pair[0])
 
-				iter.getNextHash( ).should.equal(pair[1])
-				should.not.exist(iter.getNextHash( ))
+				iter.getWholeHash( ).should.equal(pair[1])
+				should.not.exist(iter.getWholeHash( ))
 
 			})
 		})
@@ -206,8 +248,7 @@ describe('UriIterator', function ( ) {
 
 
 
-
-	describe('peekNextParams', function ( ) {
+	describe('peekWholeParams', function ( ) {
 		it('should return the full query string', function () {
 
 			;[
@@ -218,15 +259,15 @@ describe('UriIterator', function ( ) {
 
 				var iter = UriIterator(pair[0])
 
-				iter.peekNextParams( ).should.equal(pair[1])
-				iter.peekNextParams( ).should.equal(pair[1])
+				iter.peekWholeParams( ).should.equal(pair[1])
+				iter.peekWholeParams( ).should.equal(pair[1])
 
 			})
 
 		})
 	})
 
-	describe('getNextParams', function ( ) {
+	describe('getWholeParams', function ( ) {
 		it('should return the full query string once', function () {
 
 			;[
@@ -237,8 +278,8 @@ describe('UriIterator', function ( ) {
 
 				var iter = UriIterator(pair[0])
 
-				iter.getNextParams( ).should.equal(pair[1])
-				should.not.exist(iter.getNextParams( ))
+				iter.getWholeParams( ).should.equal(pair[1])
+				should.not.exist(iter.getWholeParams( ))
 
 			})
 
