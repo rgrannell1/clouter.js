@@ -1,4 +1,19 @@
 
+var Path = path => {
+
+	if (is.string(path)) {
+
+		return StringPath(path)
+
+	} else if (is.location(path)) {
+
+		return WindowPath(path)
+
+	} else {
+		throw TypeError('path method.')
+	}
+
+}
 
 
 
@@ -20,13 +35,21 @@ var StringPath = path => {
 
 }
 
-var WindowPath = ( ) => {
+var WindowPath = path => {
 
 	var self = {
-		data: window.location,
+		data: path,
 
 		getPath: ( ) => {
-			return self.data.href
+
+			return [
+				self.data.pathname,
+				self.data.search,
+				self.data.hash
+			]
+			.filter(part => part && part.length > 0)
+			.join('')
+
 		},
 		setPath: path => {
 			self.data.pathname = path

@@ -36,7 +36,7 @@ if (typeof process !== "undefined" && module.exports) {
 
 			dispatchRoutes.precond(location, routes, middleware);
 
-			var query = UriIterator.fromLocation(location());
+			var query = UriIterator.fromLocation(location.getPath());
 			var clone = UriIterator.fromUriIterator(query);
 
 			for (var ith = 0; ith < routes.length; ++ith) {
@@ -49,16 +49,16 @@ if (typeof process !== "undefined" && module.exports) {
 					// -- either a boolean, or a route object describing how to
 					// -- bind the result of the location.
 
-					isMatch = route.pattern(location());
+					isMatch = route.pattern(location.getPath());
 
 					if (is.boolean(isMatch) && isMatch) {
 
 						middleware.forEach(function (response) {
-							response(location());
+							response(location.getPath());
 						});
 
 						route.response(query, function () {
-							dispatchRoutes(location(), routes.slice(ith + 1), middleware);
+							dispatchRoutes(location.getPath(), routes.slice(ith + 1), middleware);
 						});
 
 						return {
@@ -89,12 +89,12 @@ if (typeof process !== "undefined" && module.exports) {
 
 			is.always.array(routes);
 			is.always.array(middleware);
-			is.always["function"](location);
+			is.always.object(location);
 		};
 
 		var dispatchAlteredRoutes = function (location, routes, middleware) {
 
-			var currentLocation = location();
+			var currentLocation = location.getPath();
 
 			for (var ith = 0; ith < routes.length; ++ith) {
 				var route;
@@ -164,7 +164,7 @@ if (typeof process !== "undefined" && module.exports) {
 
 			setInterval(function () {
 
-				var currentURL = location().href;
+				var currentURL = location.getPath();
 
 				if (previous !== currentURL) {
 
@@ -178,12 +178,15 @@ if (typeof process !== "undefined" && module.exports) {
 			var location = _ref.location;
 
 			var self = {
+				location: Path(location),
 				routes: {
 					onLoad: [],
 					onChange: [],
 					onAlter: []
 				},
-				middleware: [] };
+				middleware: []
+
+			};
 
 			var onLoad = function onLoad(pattern, response) {
 
@@ -257,18 +260,52 @@ if (typeof process !== "undefined" && module.exports) {
 
 			var run = function run() {
 
-				dispatchRoutes(location, self.routes.onLoad, self.middleware);
+				dispatchRoutes(self.location, self.routes.onLoad, self.middleware);
 
-				onLocationChange(location, function () {
-					dispatchRoutes(location, self.routes.onChange, self.middleware);
+				onLocationChange(self.location, function () {
+					dispatchRoutes(self.location, self.routes.onChange, self.middleware);
 				});
 
-				onLocationChange(location, function () {
-					dispatchAlteredRoutes(location, self.routes.onAlter, self.middleware);
+				onLocationChange(self.location, function () {
+					dispatchAlteredRoutes(self.location, self.routes.onAlter, self.middleware);
 				});
 			};
 
-			var go = function go(path) {};
+			var clearPaths = function clearPaths() {};
+
+			var clearHash = function clearHash() {};
+
+			var clearPath = function clearPath() {};
+
+			var clearParam = function clearParam() {};
+
+			var clearParams = function clearParams() {};
+
+			var clearResource = function clearResource() {};
+
+			var clearFilter = function clearFilter() {};
+
+			var clear = function clear() {};
+
+			var setPaths = function setPaths() {};
+
+			var setHash = function setHash() {};
+
+			var setPath = function setPath() {};
+
+			var setParam = function setParam() {};
+
+			var setParams = function setParams() {};
+
+			var setResource = function setResource() {};
+
+			var setFilter = function setFilter() {};
+
+			var set = function set() {};
+
+			var addPath = function addPath() {};
+
+			var addParam = function addParam() {};
 
 			self.onLoad = onLoad;
 			self.onChange = onChange;
@@ -276,7 +313,6 @@ if (typeof process !== "undefined" && module.exports) {
 
 			self.use = use;
 			self.run = run;
-			self.go = go;
 
 			return self;
 		};
