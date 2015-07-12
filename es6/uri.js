@@ -52,7 +52,7 @@ var WindowPath = path => {
 
 		},
 		setPath: path => {
-			self.data.pathname = path
+			history.pushState(null, '', path)
 		}
 	}
 
