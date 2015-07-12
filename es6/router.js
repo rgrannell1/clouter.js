@@ -42,7 +42,7 @@ if (typeof process !== 'undefined' && module.exports) {
 
 		dispatchRoutes.precond(location, routes, middleware)
 
-		var query = UriIterator.fromLocation(location.getPath( ))
+		var query = UriIterator(location.getPath( ))
 		var clone = UriIterator.fromUriIterator(query)
 
 
@@ -109,7 +109,7 @@ if (typeof process !== 'undefined' && module.exports) {
 		for (let ith = 0; ith < routes.length; ++ith) {
 
 			var route = routes[ith]
-			var part  = route.projection(UriIterator.fromLocation(currentLocation))
+			var part  = route.projection(UriIterator(currentLocation))
 
 			// -- if the part hasn't changed, continue
 			if (part === routes[ith].previous) {
@@ -130,8 +130,8 @@ if (typeof process !== 'undefined' && module.exports) {
 					response(currentLocation)
 				})
 
-				route.response(UriIterator.fromLocation(currentLocation), ( ) => {
-					dispatchRoutes(UriIterator.fromLocation(currentLocation), routes.slice(ith + 1), middleware)
+				route.response(UriIterator(currentLocation), ( ) => {
+					dispatchRoutes(UriIterator(currentLocation), routes.slice(ith + 1), middleware)
 				})
 
 				return
@@ -144,7 +144,7 @@ if (typeof process !== 'undefined' && module.exports) {
 						response(bindLocation(isMatch, clone))
 					})
 
-					route.response(UriIterator.fromLocation(currentLocation), ( ) => {
+					route.response(UriIterator(currentLocation), ( ) => {
 						dispatchRoutes(bindLocation(isMatch, clone), routes.slice(ith + 1), middleware)
 					})
 
