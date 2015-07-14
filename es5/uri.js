@@ -36,12 +36,12 @@ var WindowPath = function (path) {
 
 		getPath: function () {
 
-			return [self.data.pathname, self.data.search, self.data.hash].filter(function (path) {
+			return [self.data.pathname, self.data.search, self.data.hash].filter(function (part) {
 				return part && part.length > 0;
 			}).join("");
 		},
 		setPath: function (path) {
-			self.data.pathname = path;
+			history.pushState(null, "", path);
 		}
 	};
 

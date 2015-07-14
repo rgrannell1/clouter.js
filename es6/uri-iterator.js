@@ -1,8 +1,4 @@
 
-
-
-
-
 if (typeof process !== 'undefined' && module.exports) {
 	var is = require('is')
 }
@@ -88,6 +84,14 @@ var UriIterator = function (raw) {
 
 	}
 
+	this.setNextPath = value => {
+
+		if ( !is.undefined(this.peekNextPath( )) ) {
+			this.data.paths[0] = value
+		}
+
+	}
+
 
 
 
@@ -111,6 +115,14 @@ var UriIterator = function (raw) {
 
 	}
 
+	this.setNextPaths = value => {
+
+		this.data.paths = value
+			.split('/')
+			.filter(path => path.length > 0)
+
+	}
+
 
 
 
@@ -131,6 +143,14 @@ var UriIterator = function (raw) {
 
 	}
 
+	this.setHash = value => {
+		this.data.hash = value
+	}
+
+
+
+
+
 	this.peekWholeHash = ( ) => {
 
 		if (!is.undefined(this.data.hash)) {
@@ -146,6 +166,10 @@ var UriIterator = function (raw) {
 
 		return result
 
+	}
+
+	this.setWholeHash = value => {
+		this.data.hash = value.replace(/^[#]/g, '')
 	}
 
 
@@ -173,6 +197,19 @@ var UriIterator = function (raw) {
 		this.data.params = undefined
 
 		return params
+
+	}
+
+	this.setWholeParams = value => {
+
+		this.data.params = is.undefined(value)
+			? undefined
+			: value.replace(/^[?]/g, '')
+				.split('&')
+				.map(pair => pair.split('='))
+				.map(pair => {
+					return {key: pair[0], value: pair[1]}
+				})
 
 	}
 
@@ -204,6 +241,38 @@ var UriIterator = function (raw) {
 
 	}
 
+	this.setNextParam = (key, value) => {
+
+		if ( !is.undefined(this.peekNextParam( )) ) {
+			this.data.params[0] = {key, value}
+		}
+
+	}
+
+
+
+
+	this.peekParams = ( ) => {
+
+		if ( !is.undefined(this.peekNextParam( )) ) {
+			return this.data.params
+		}
+
+	}
+
+	this.getParams = ( ) => {
+
+		var result       = this.peekParams( )
+		this.data.params = undefined
+
+		return result
+
+	}
+
+
+
+
+
 	this.peekWhole = ( ) => {
 
 		return [
@@ -225,6 +294,13 @@ var UriIterator = function (raw) {
 		})
 
 		return result
+
+	}
+
+	this.setWhole = value => {
+
+		var iter = UriIterator(value)
+		this.data = iter.data
 
 	}
 
@@ -270,6 +346,9 @@ UriIterator.fromLocation = location => {
 
 }
 
+UriIterator.fromPath = path => {
+	return new UriIterator(path.getPath( ))
+}
 
 
 

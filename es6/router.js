@@ -288,87 +288,100 @@ if (typeof process !== 'undefined' && module.exports) {
 
 
 
+		self.url = { }
 
-
-		var clearPaths    = function ( ) {
-
+		self.url.clearPaths    = ( ) => {
+			self.url.setPaths(undefined)
 		}
 
-		var clearHash     = function ( ) {
-
+		self.url.clearHash     = ( ) => {
+			self.url.setHash(undefined)
 		}
 
-		var clearPath     = function ( ) {
-
+		self.url.clearPath     = ( ) => {
+			self.url.setPath(undefined)
 		}
 
-		var clearParam    = function ( ) {
-
+		self.url.clearParam    = ( ) => {
+			self.url.setParam(undefined)
 		}
 
-		var clearParams   = function ( ) {
-
+		self.url.clearParams   = ( ) => {
+			self.url.setParams(undefined)
 		}
 
-		var clearResource = function ( ) {
-
+		self.url.clearResource = ( ) => {
+			self.url.setResource(undefined)
 		}
 
-		var clearFilter   = function ( ) {
-
+		self.url.clearFilter   = ( ) => {
+			self.url.setFilter(undefined)
 		}
 
-
-		var clear         = function ( ) {
-
-		}
-
-
-
-
-		var setPaths    = function ( ) {
-
-		}
-
-		var setHash     = function ( ) {
-
-		}
-
-		var setPath     = function ( ) {
-
-		}
-
-		var setParam    = function ( ) {
-
-		}
-
-		var setParams   = function ( ) {
-
-		}
-
-		var setResource = function ( ) {
-
-		}
-
-		var setFilter   = function ( ) {
-
-		}
-
-
-		var set         = function ( ) {
-
+		self.url.clear         = ( ) => {
+			self.url.location.setPath('')
 		}
 
 
 
 
+		self.url.setPaths    = value => {
 
-		var addPath  = function ( ) {
+			var iter = UriIterator.fromPath(self.location)
+			iter.setPaths(value)
+
+			self.url.set(iter.peekWhole( ))
 
 		}
 
-		var addParam = function ( ) {
+		self.url.setHash     = value => {
 
+			var iter = UriIterator.fromPath(self.location)
+			iter.setHash(value)
+
+			self.url.set(iter.peekWhole( ))
+
+		}
+
+		self.url.setParams   = value => {
+
+			var iter = UriIterator.fromPath(self.location)
+			iter.setWholeParams(value)
+
+			self.url.set(iter.peekWhole( ))
+
+		}
+
+		self.url.setResource = value => {
+
+		}
+
+		self.url.setFilter   = value => {
+
+		}
+
+
+		self.url.set         = (path)  =>{
+			self.location.setPath(path)
+		}
+
+
+
+
+
+		self.url.addPath  = ( ) => {
+
+		}
+
+		self.url.addParam = ( ) => {
+
+		}
+
+
+
+
+		self.url.asIterator = ( ) => {
+			return UriIterator(self.location.getPath( ))
 		}
 
 

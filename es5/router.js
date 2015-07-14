@@ -36,7 +36,7 @@ if (typeof process !== "undefined" && module.exports) {
 
 			dispatchRoutes.precond(location, routes, middleware);
 
-			var query = UriIterator.fromLocation(location.getPath());
+			var query = UriIterator(location.getPath());
 			var clone = UriIterator.fromUriIterator(query);
 
 			for (var ith = 0; ith < routes.length; ++ith) {
@@ -103,7 +103,7 @@ if (typeof process !== "undefined" && module.exports) {
 
 				var _ret2 = (function (ith) {
 					route = routes[ith];
-					part = route.projection(UriIterator.fromLocation(currentLocation));
+					part = route.projection(UriIterator(currentLocation));
 
 					// -- if the part hasn't changed, continue
 					if (part === routes[ith].previous) {
@@ -124,8 +124,8 @@ if (typeof process !== "undefined" && module.exports) {
 							response(currentLocation);
 						});
 
-						route.response(UriIterator.fromLocation(currentLocation), function () {
-							dispatchRoutes(UriIterator.fromLocation(currentLocation), routes.slice(ith + 1), middleware);
+						route.response(UriIterator(currentLocation), function () {
+							dispatchRoutes(UriIterator(currentLocation), routes.slice(ith + 1), middleware);
 						});
 
 						return {
@@ -139,7 +139,7 @@ if (typeof process !== "undefined" && module.exports) {
 								response(bindLocation(isMatch, clone));
 							});
 
-							route.response(UriIterator.fromLocation(currentLocation), function () {
+							route.response(UriIterator(currentLocation), function () {
 								dispatchRoutes(bindLocation(isMatch, clone), routes.slice(ith + 1), middleware);
 							});
 						} else {
@@ -271,41 +271,79 @@ if (typeof process !== "undefined" && module.exports) {
 				});
 			};
 
-			var clearPaths = function clearPaths() {};
+			self.url = {};
 
-			var clearHash = function clearHash() {};
+			self.url.clearPaths = function () {
+				self.url.setPaths(undefined);
+			};
 
-			var clearPath = function clearPath() {};
+			self.url.clearHash = function () {
+				self.url.setHash(undefined);
+			};
 
-			var clearParam = function clearParam() {};
+			self.url.clearPath = function () {
+				self.url.setPath(undefined);
+			};
 
-			var clearParams = function clearParams() {};
+			self.url.clearParam = function () {
+				self.url.setParam(undefined);
+			};
 
-			var clearResource = function clearResource() {};
+			self.url.clearParams = function () {
+				self.url.setParams(undefined);
+			};
 
-			var clearFilter = function clearFilter() {};
+			self.url.clearResource = function () {
+				self.url.setResource(undefined);
+			};
 
-			var clear = function clear() {};
+			self.url.clearFilter = function () {
+				self.url.setFilter(undefined);
+			};
 
-			var setPaths = function setPaths() {};
+			self.url.clear = function () {
+				self.url.location.setPath("");
+			};
 
-			var setHash = function setHash() {};
+			self.url.setPaths = function (value) {
 
-			var setPath = function setPath() {};
+				var iter = UriIterator.fromPath(self.location);
+				iter.setPaths(value);
 
-			var setParam = function setParam() {};
+				self.url.set(iter.peekWhole());
+			};
 
-			var setParams = function setParams() {};
+			self.url.setHash = function (value) {
 
-			var setResource = function setResource() {};
+				var iter = UriIterator.fromPath(self.location);
+				iter.setHash(value);
 
-			var setFilter = function setFilter() {};
+				self.url.set(iter.peekWhole());
+			};
 
-			var set = function set() {};
+			self.url.setParams = function (value) {
 
-			var addPath = function addPath() {};
+				var iter = UriIterator.fromPath(self.location);
+				iter.setWholeParams(value);
 
-			var addParam = function addParam() {};
+				self.url.set(iter.peekWhole());
+			};
+
+			self.url.setResource = function (value) {};
+
+			self.url.setFilter = function (value) {};
+
+			self.url.set = function (path) {
+				self.location.setPath(path);
+			};
+
+			self.url.addPath = function () {};
+
+			self.url.addParam = function () {};
+
+			self.url.asIterator = function () {
+				return UriIterator(self.location.getPath());
+			};
 
 			self.onLoad = onLoad;
 			self.onChange = onChange;

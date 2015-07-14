@@ -72,6 +72,13 @@ var UriIterator = (function (_UriIterator) {
 		return result;
 	};
 
+	this.setNextPath = function (value) {
+
+		if (!is.undefined(_this.peekNextPath())) {
+			_this.data.paths[0] = value;
+		}
+	};
+
 	this.peekNextPaths = function () {
 
 		var isEmpty = is.undefined(_this.data.paths) || _this.data.paths.length === 0;
@@ -89,6 +96,13 @@ var UriIterator = (function (_UriIterator) {
 		return result;
 	};
 
+	this.setNextPaths = function (value) {
+
+		_this.data.paths = value.split("/").filter(function (path) {
+			return path.length > 0;
+		});
+	};
+
 	this.peekHash = function () {
 
 		if (!is.undefined(_this.data.hash)) {
@@ -104,6 +118,10 @@ var UriIterator = (function (_UriIterator) {
 		return result;
 	};
 
+	this.setHash = function (value) {
+		_this.data.hash = value;
+	};
+
 	this.peekWholeHash = function () {
 
 		if (!is.undefined(_this.data.hash)) {
@@ -117,6 +135,10 @@ var UriIterator = (function (_UriIterator) {
 		_this.data.hash = undefined;
 
 		return result;
+	};
+
+	this.setWholeHash = function (value) {
+		_this.data.hash = value.replace(/^[#]/g, "");
 	};
 
 	this.peekWholeParams = function () {
@@ -137,6 +159,15 @@ var UriIterator = (function (_UriIterator) {
 		_this.data.params = undefined;
 
 		return params;
+	};
+
+	this.setWholeParams = function (value) {
+
+		_this.data.params = is.undefined(value) ? undefined : value.replace(/^[?]/g, "").split("&").map(function (pair) {
+			return pair.split("=");
+		}).map(function (pair) {
+			return { key: pair[0], value: pair[1] };
+		});
 	};
 
 	this.peekNextParam = function () {
@@ -161,6 +192,28 @@ var UriIterator = (function (_UriIterator) {
 		return result;
 	};
 
+	this.setNextParam = function (key, value) {
+
+		if (!is.undefined(_this.peekNextParam())) {
+			_this.data.params[0] = { key: key, value: value };
+		}
+	};
+
+	this.peekParams = function () {
+
+		if (!is.undefined(_this.peekNextParam())) {
+			return _this.data.params;
+		}
+	};
+
+	this.getParams = function () {
+
+		var result = _this.peekParams();
+		_this.data.params = undefined;
+
+		return result;
+	};
+
 	this.peekWhole = function () {
 
 		return [_this.peekNextPaths(), _this.peekWholeParams(), _this.peekWholeHash()].filter(function (part) {
@@ -175,6 +228,12 @@ var UriIterator = (function (_UriIterator) {
 		});
 
 		return result;
+	};
+
+	this.setWhole = function (value) {
+
+		var iter = UriIterator(value);
+		_this.data = iter.data;
 	};
 
 	return this;
@@ -196,6 +255,10 @@ UriIterator.fromLocation = function (location) {
 	}).join("");
 
 	return new UriIterator(raw);
+};
+
+UriIterator.fromPath = function (path) {
+	return new UriIterator(path.getPath());
 };
 
 if (typeof process !== "undefined" && module.exports) {
